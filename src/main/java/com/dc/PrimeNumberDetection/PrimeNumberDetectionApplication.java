@@ -7,7 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.dc.PrimeNumberDetection.bully.Bully;
-import com.dc.PrimeNumberDetection.service.impl.NodeServiceImpl;
 
 @SpringBootApplication
 public class PrimeNumberDetectionApplication {
@@ -29,11 +28,7 @@ public class PrimeNumberDetectionApplication {
 
 		System.out.println("node id before : " + nodeId);
 
-		Bully bully = new Bully(args[0], (int) (nodeId >= 0 ? nodeId : nodeId * -1), Integer.parseInt(args[1]));
-
-		NodeServiceImpl impl = new NodeServiceImpl();
-
-		impl.getNodeDetails();
+		Bully bully = new Bully(args[0], (int) (nodeId < 0 ? nodeId : nodeId * -1), Integer.parseInt(args[1]));
 	}
 
 }
