@@ -71,7 +71,7 @@ public class PrimeNumberDetectionApplication {
 
 	}
 
-	private static Map<String, Integer> getPortsOfNodes() {
+	private static Map<String, Object> getPortsOfNodes() {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -93,7 +93,7 @@ public class PrimeNumberDetectionApplication {
 			System.out.println(map2.get("Service"));
 			System.out.println(map2.get("Port"));
 
-			map.put(map2.get("Service"), map2.get("Port"));
+			map.put(map2.get("Service").toString(), map2.get("Port"));
 
 		}
 
