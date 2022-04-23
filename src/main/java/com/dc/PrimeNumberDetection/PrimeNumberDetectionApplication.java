@@ -1,13 +1,18 @@
 package com.dc.PrimeNumberDetection;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.dc.PrimeNumberDetection.bully.Bully;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 public class PrimeNumberDetectionApplication {
@@ -36,7 +41,9 @@ public class PrimeNumberDetectionApplication {
 
 		try {
 
-			registerNode();
+//			registerNode();
+
+			getPortsOfNodes();
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -61,6 +68,36 @@ public class PrimeNumberDetectionApplication {
 		System.out.println(data);
 
 		restTemplate.put(url, data);
+
+	}
+
+	private static Map<String, Integer> getPortsOfNodes() {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		String url = "http://127.0.0.1:8500/v1/agent/services";
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Object> object = restTemplate.getForEntity(url, Object.class);
+
+		Map<String, Object> o = (LinkedHashMap<String, Object>) object.getBody();
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		for (String key : o.keySet()) {
+			System.out.println(key);
+
+			Map<String, Object> map2 = mapper.convertValue(o.get(key), Map.class);
+
+			System.out.println(map2.get("Service"));
+			System.out.println(map2.get("Port"));
+
+			map.put(map2.get("Service"), map2.get("Port"));
+
+		}
+
+		return map;
 
 	}
 
