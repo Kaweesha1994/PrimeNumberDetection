@@ -34,7 +34,14 @@ public class PrimeNumberDetectionApplication {
 
 		Bully bully = new Bully(args[0], (int) (nodeId < 0 ? nodeId : nodeId * -1), Integer.parseInt(args[1]));
 
-		registerNode();
+		try {
+
+			registerNode();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e);
+		}
 
 	}
 
