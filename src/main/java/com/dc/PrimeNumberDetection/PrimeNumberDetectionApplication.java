@@ -55,7 +55,7 @@ public class PrimeNumberDetectionApplication {
 			List<NodeDto> nodeDtos = nodeUtil.getNodeDetails(portsOfAllNodes);
 
 			for (NodeDto nodeDto : nodeDtos) {
-				System.out.println("node name : " + nodeDto.getNodeId());
+				System.out.println("node name : " + nodeDto.getNodeName());
 			}
 
 		} catch (Exception e) {
