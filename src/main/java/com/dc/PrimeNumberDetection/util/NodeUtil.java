@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.dc.PrimeNumberDetection.bully.Bully;
+import com.dc.PrimeNumberDetection.dto.AnnounceDto;
 import com.dc.PrimeNumberDetection.dto.NodeDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,6 +89,72 @@ public class NodeUtil {
 		System.out.println(data);
 
 		restTemplate.put(url, data);
+
+	}
+
+	public Boolean readyForElection(List<Integer> portsOfNodes) {
+
+		List<Boolean> coordinatorList = new LinkedList<Boolean>();
+		List<Boolean> electionList = new LinkedList<Boolean>();
+
+		List<NodeDto> nodeDtos = getNodeDetails(portsOfNodes);
+
+		for (NodeDto nodeDto : nodeDtos) {
+
+			coordinatorList.add(nodeDto.getCoordinator());
+			electionList.add(nodeDto.getElection());
+
+		}
+
+		coordinatorList.add(Bully.getCoordinator());
+		electionList.add(Bully.getElection());
+
+		if (coordinatorList.contains(Boolean.TRUE) || electionList.contains(Boolean.TRUE)) {
+			return Boolean.FALSE;
+		} else {
+			return Boolean.TRUE;
+		}
+
+	}
+
+	public List<Integer> getHigherNodes(List<NodeDto> nodeDtos) {
+
+		List<Integer> higherNodes = new LinkedList<Integer>();
+
+		for (NodeDto nodeDto : nodeDtos) {
+
+			if (nodeDto.getNodeId() > Bully.getNodeId()) {
+
+				higherNodes.add(nodeDto.getPort());
+
+			}
+
+		}
+
+		return higherNodes;
+
+	}
+
+	public void announce() {
+
+		List<Integer> portsOfAllNodes = getPortsOfNodes();
+
+//		String data = "{'coordinator': " + Bully.getNodeName() + "}";
+
+		AnnounceDto announceDto = new AnnounceDto();
+		announceDto.setCoordinator(Bully.getNodeName());
+
+		for (Integer port : portsOfAllNodes) {
+
+			String url = "http://localhost:" + port + "/announce";
+
+			System.out.println("announce url : " + url);
+
+			RestTemplate restTemplate = new RestTemplate();
+
+			restTemplate.postForObject(url, announceDto, Object.class);
+
+		}
 
 	}
 

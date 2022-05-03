@@ -3,6 +3,7 @@ package com.dc.PrimeNumberDetection;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -54,8 +55,36 @@ public class PrimeNumberDetectionApplication {
 
 			List<NodeDto> nodeDtos = nodeUtil.getNodeDetails(portsOfAllNodes);
 
-			for (NodeDto nodeDto : nodeDtos) {
-				System.out.println("node name : " + nodeDto.getNodeName());
+			int delay = new Random().nextInt(15);
+
+			System.out.println("delay : " + delay);
+
+			TimeUnit.SECONDS.sleep(delay);
+
+			Boolean electionReady = nodeUtil.readyForElection(portsOfAllNodes);
+
+			if (electionReady) {
+
+				System.out.println("Starting election in : " + Bully.getNodeName());
+
+				Bully.setElection(Boolean.TRUE);
+
+				List<Integer> higherNodes = nodeUtil.getHigherNodes(nodeDtos);
+
+				System.out.println("Higher nodes : " + higherNodes);
+
+				if (higherNodes.size() == 0) {
+
+					Bully.setCoordinator(Boolean.TRUE);
+					Bully.setElection(Boolean.FALSE);
+
+					nodeUtil.announce();
+
+					System.out.println("Coordinator is : " + Bully.getNodeName());
+					System.out.println("**********End of election**********************");
+
+				}
+
 			}
 
 		} catch (Exception e) {
