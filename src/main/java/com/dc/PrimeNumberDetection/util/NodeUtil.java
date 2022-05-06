@@ -21,7 +21,7 @@ public class NodeUtil {
 
 		for (Integer port : portsOfNodes) {
 
-			String url = "http://localhost:" + port + "/prime-number-detection/get-node-details";
+			String url = Constant.SERVER_URL + port + Constant.GET_NODE_DETAILS;
 
 			System.out.println(url);
 
@@ -41,7 +41,7 @@ public class NodeUtil {
 
 		List<Integer> portsOfNodes = new LinkedList<Integer>();
 
-		String url = "http://127.0.0.1:8500/v1/agent/services";
+		String url = Constant.GET_SERVICES;
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -69,7 +69,7 @@ public class NodeUtil {
 
 	public void registerNode() {
 
-		String url = "http://localhost:8500/v1/agent/service/register";
+		String url = Constant.REGISTER_NODE_URL;
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -140,7 +140,7 @@ public class NodeUtil {
 
 		for (Integer port : portsOfAllNodes) {
 
-			String url = "http://localhost:" + port + "/prime-number-detection/announce";
+			String url = Constant.SERVER_URL + port + Constant.ANNOUNCE;
 
 			System.out.println("announce url : " + url);
 
