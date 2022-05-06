@@ -15,12 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NodeUtil {
 
-	public Boolean readyForElection(Integer[] portsOfAllNodes, Boolean selfElection, Boolean selfCoordinator) {
-
-		return true;
-
-	}
-
 	public List<NodeDto> getNodeDetails(List<Integer> portsOfNodes) {
 
 		List<NodeDto> nodeDtos = new LinkedList<NodeDto>();
@@ -146,13 +140,35 @@ public class NodeUtil {
 
 		for (Integer port : portsOfAllNodes) {
 
-			String url = "http://localhost:" + port + "/announce";
+			String url = "http://localhost:" + port + "/prime-number-detection/announce";
 
 			System.out.println("announce url : " + url);
 
 			RestTemplate restTemplate = new RestTemplate();
 
 			restTemplate.postForObject(url, announceDto, Object.class);
+
+		}
+
+	}
+
+	public void election(List<Integer> higherNodes) {
+
+		List<Integer> statusCodes;
+
+		for (Integer higherNode : higherNodes) {
+
+			String url = Constant.SERVER_URL + higherNode + Constant.PROXY_URL;
+
+			System.out.println("proxy url : " + url);
+
+			NodeDto nodeDto = new NodeDto();
+
+			nodeDto.setNodeId(Bully.getNodeId());
+
+			RestTemplate restTemplate = new RestTemplate();
+
+			restTemplate.postForObject(url, nodeDto, Object.class);
 
 		}
 

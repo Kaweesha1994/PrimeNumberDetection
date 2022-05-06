@@ -28,7 +28,7 @@ public class PrimeNumberDetectionApplication {
 
 		System.out.println("random number : " + randomLong);
 
-		long nodeId = timeMili + randomLong;
+		Integer nodeId = (int) (timeMili + randomLong);
 
 		System.out.println("node id before : " + nodeId);
 
@@ -41,7 +41,7 @@ public class PrimeNumberDetectionApplication {
 			System.out.println("node id : " + nodeId);
 		}
 
-		Bully bully = new Bully(args[0], (int) (nodeId), Integer.parseInt(args[1]));
+		Bully bully = new Bully(args[0], nodeId, Integer.parseInt(args[1]));
 
 		try {
 
@@ -84,6 +84,10 @@ public class PrimeNumberDetectionApplication {
 					System.out.println("**********End of election**********************");
 
 				}
+
+			} else {
+
+				nodeUtil.election(portsOfAllNodes);
 
 			}
 

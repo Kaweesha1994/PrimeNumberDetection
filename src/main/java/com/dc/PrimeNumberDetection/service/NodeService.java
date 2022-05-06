@@ -6,4 +6,6 @@ public interface NodeService {
 
 	NodeDto getNodeDetails();
 
+	void getNodeResponse(NodeDto nodeDto);
+
 }

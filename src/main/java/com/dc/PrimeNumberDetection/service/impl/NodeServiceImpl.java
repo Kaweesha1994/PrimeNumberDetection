@@ -24,4 +24,15 @@ public class NodeServiceImpl implements NodeService {
 
 	}
 
+	@Override
+	public void getNodeResponse(NodeDto nodeDto) {
+
+		Integer incomingNodeId = nodeDto.getNodeId();
+
+		if (Bully.getNodeId() > incomingNodeId) {
+			Bully.setElection(Boolean.FALSE);
+		}
+
+	}
+
 }
