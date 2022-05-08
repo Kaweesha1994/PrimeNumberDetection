@@ -1,7 +1,6 @@
 package com.dc.PrimeNumberDetection;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.dc.PrimeNumberDetection.bully.Bully;
-import com.dc.PrimeNumberDetection.dto.NodeDto;
 import com.dc.PrimeNumberDetection.util.NodeUtil;
 
 @SpringBootApplication
@@ -49,47 +47,9 @@ public class PrimeNumberDetectionApplication {
 
 			nodeUtil.registerNode();
 
-			List<Integer> portsOfAllNodes = nodeUtil.getPortsOfNodes();
+			TimeUnit.SECONDS.sleep(30);
 
-			portsOfAllNodes.remove(Bully.getPort());
-
-			List<NodeDto> nodeDtos = nodeUtil.getNodeDetails(portsOfAllNodes);
-
-			int delay = new Random().nextInt(15);
-
-			System.out.println("delay : " + delay);
-
-			TimeUnit.SECONDS.sleep(delay);
-
-			Boolean electionReady = nodeUtil.readyForElection(portsOfAllNodes);
-
-			if (electionReady) {
-
-				System.out.println("Starting election in : " + Bully.getNodeName());
-
-				Bully.setElection(Boolean.TRUE);
-
-				List<Integer> higherNodes = nodeUtil.getHigherNodes(nodeDtos);
-
-				System.out.println("Higher nodes : " + higherNodes);
-
-				if (higherNodes.size() == 0) {
-
-					Bully.setCoordinator(Boolean.TRUE);
-					Bully.setElection(Boolean.FALSE);
-
-					nodeUtil.announce();
-
-					System.out.println("Coordinator is : " + Bully.getNodeName());
-					System.out.println("**********End of election**********************");
-
-				}
-
-			} else {
-
-				nodeUtil.election(portsOfAllNodes);
-
-			}
+			nodeUtil.init();
 
 		} catch (Exception e) {
 			// TODO: handle exception

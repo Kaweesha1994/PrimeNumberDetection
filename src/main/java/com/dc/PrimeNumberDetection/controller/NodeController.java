@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dc.PrimeNumberDetection.bully.Bully;
 import com.dc.PrimeNumberDetection.dto.AnnounceDto;
 import com.dc.PrimeNumberDetection.dto.NodeDto;
+import com.dc.PrimeNumberDetection.dto.RoleDto;
 import com.dc.PrimeNumberDetection.service.NodeService;
 import com.dc.PrimeNumberDetection.util.Counter;
 
@@ -54,6 +55,30 @@ public class NodeController {
 	public ResponseEntity<NodeDto> responseNode(@RequestBody NodeDto nodeDto) {
 
 		nodeService.getNodeResponse(nodeDto);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping("/accepter")
+	public ResponseEntity<NodeDto> acceptor(@RequestBody RoleDto roleDto) {
+
+		System.out.println(roleDto.getRole());
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping("/learner")
+	public ResponseEntity<NodeDto> learner(@RequestBody RoleDto roleDto) {
+
+		System.out.println(roleDto.getRole());
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping("/proposer")
+	public ResponseEntity<NodeDto> proposer(@RequestBody RoleDto roleDto) {
+
+		System.out.println(roleDto.getRole());
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

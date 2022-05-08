@@ -16,7 +16,7 @@ public class Counter implements Runnable {
 	private Integer nodeId;
 
 	public static void createThread() {
-		executorService = Executors.newFixedThreadPool(5);
+		executorService = Executors.newFixedThreadPool(20);
 	}
 
 	public Counter(Integer nodeId) {

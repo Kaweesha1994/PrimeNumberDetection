@@ -1,9 +1,13 @@
 package com.dc.PrimeNumberDetection.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -60,6 +64,36 @@ public class NodeUtil {
 			System.out.println(map2.get("Port"));
 
 			portsOfNodes.add((Integer) map2.get("Port"));
+
+		}
+
+		return portsOfNodes;
+
+	}
+
+	public Map<String, Integer> getPortsOfNodesMap() {
+
+		Map<String, Integer> portsOfNodes = new HashMap<String, Integer>();
+
+		String url = Constant.GET_SERVICES;
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Object> object = restTemplate.getForEntity(url, Object.class);
+
+		Map<String, Object> o = (LinkedHashMap<String, Object>) object.getBody();
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		for (String key : o.keySet()) {
+			System.out.println(key);
+
+			Map<String, Object> map2 = mapper.convertValue(o.get(key), Map.class);
+
+			System.out.println(map2.get("Service"));
+			System.out.println(map2.get("Port"));
+
+			portsOfNodes.put((String) map2.get("Service"), (Integer) map2.get("Port"));
 
 		}
 
@@ -172,6 +206,90 @@ public class NodeUtil {
 
 		}
 
+	}
+
+	public String checkHealthOfService(String service) {
+		System.out.println("Checking health of the " + service);
+
+		String url = Constant.CHECK_FOR_HEALTH_URL + service;
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Object> object = restTemplate.getForEntity(url, Object.class);
+
+		ArrayList<Object> o = (ArrayList<Object>) object.getBody();
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		System.out.println(o);
+
+		Map<String, Object> map2 = mapper.convertValue(o.get(0), Map.class);
+
+		System.out.println("aggregate status : " + map2.get("AggregatedStatus"));
+
+		String aggregateStatus = (String) map2.get("AggregatedStatus");
+
+		String serviceStatus = aggregateStatus;
+
+		if (object.getStatusCodeValue() == 503 && serviceStatus.equals("critical")) {
+			serviceStatus = "crashed";
+		}
+
+		System.out.println("Service status is : " + serviceStatus);
+
+		return serviceStatus;
+
+	}
+
+	public void init() throws InterruptedException {
+
+		NodeUtil nodeUtil = new NodeUtil();
+
+		List<Integer> portsOfAllNodes = nodeUtil.getPortsOfNodes();
+
+		portsOfAllNodes.remove(Bully.getPort());
+
+		List<NodeDto> nodeDtos = nodeUtil.getNodeDetails(portsOfAllNodes);
+
+		int delay = new Random().nextInt(15);
+
+		System.out.println("delay : " + delay);
+
+		TimeUnit.SECONDS.sleep(delay);
+
+		Boolean electionReady = nodeUtil.readyForElection(portsOfAllNodes);
+
+		if (electionReady || !Constant.wait) {
+
+			System.out.println("Starting election in : " + Bully.getNodeName());
+
+			Bully.setElection(Boolean.TRUE);
+
+			List<Integer> higherNodes = nodeUtil.getHigherNodes(nodeDtos);
+
+			System.out.println("Higher nodes : " + higherNodes);
+
+			if (higherNodes.size() == 0) {
+
+				Bully.setCoordinator(Boolean.TRUE);
+				Bully.setElection(Boolean.FALSE);
+
+				nodeUtil.announce();
+
+				System.out.println("Coordinator is : " + Bully.getNodeName());
+				System.out.println("**********End of election**********************");
+
+				CoordinatorUtil coordinatorUtil = new CoordinatorUtil();
+
+				coordinatorUtil.masterWork();
+
+			} else {
+
+				nodeUtil.election(portsOfAllNodes);
+
+			}
+
+		}
 	}
 
 }
